@@ -2,6 +2,7 @@
 //require_once('includes/headsection.php');
 require_once('config.php');
 require_once(ROOT_PATH . '/includes/functions.php');
+require_once(ROOT_PATH . '/includes/registration_login.php');
 
 $posts = getPublishedPosts();
 
