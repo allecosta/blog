@@ -66,3 +66,34 @@ function getTopicsNameById($id)
     $topics = mysqli_fetch_assoc($result);
     return $topics['name'];
 }
+
+/**
+ * Retorna uma unica postagem
+ */
+
+function getPost($slug)
+{
+    global $conn;
+    $postSlug = $_GET['post-slug'];
+    $sql = "SELECT * FROM posts WHERE slug='$postSlug' AND published=true";
+    $result = mysqli_query($conn, $sql);
+    $post = mysqli_fetch_assoc($result);
+
+    if ($post) {
+        $post['topics'] = getPostsTopics($post['id']);
+    }
+
+    return $post;
+}
+
+/**
+ * Retorna todos os topicos
+ */
+function getAllTopics()
+{
+    global $conn;
+    $sql = "SELECT * FROM topics";
+    $result = mysqli_query($conn, $sql);
+    $topics = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    return $topics;
+}
