@@ -8,6 +8,10 @@ $email = "";
 
 $errors = [];
 
+$topicsId = 0;
+$isEditingUser = false;
+$topicsName = "";
+
 /**
  * Administra ações dos usuários
  */
@@ -20,6 +24,28 @@ if (isset($_GET['edit-admin'])) {
 if (isset($_GET['delete-admin'])) {
     $adminId = $_GET['delete-admin'];
     deleteAdmin($adminId);
+}
+
+/**
+ * Açoes de Topicos
+ */
+if (isset($_POST['create-topics'])) {
+    createTopics($_POST);
+}
+
+if (isset($_GET['edit-topics'])) {
+    $isEditingUser = true;
+    $topicsId = $_GET['edit-topics'];
+    editTopics($topicsId);
+}
+
+if (isset($_POST['update-topics'])) {
+    updateTopics($_POST);
+}
+
+if (isset($_GET['delete-topics'])) {
+    $topicsId = $_GET['delete-topics'];
+    deleteTopics($topicsId);
 }
 
 /**
@@ -146,6 +172,96 @@ function deleteAdmin($adminId)
     if (mysqli_query($conn, $sql)) {
         $_SESSION['message'] = "Usuário deletado com sucesso";
         header('location: users.php');
+        exit(0);
+    }
+}
+
+/**
+ * Funcoes de Topicos
+ */
+function getAllTopics()
+{
+    global $conn;
+
+    $sql = "SELECT * FROM topics";
+    $result = mysqli_query($conn, $sql);
+    $topics = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $topics;
+}
+
+function createTopics($requestValues)
+{
+    global $conn, $errors, $topicsName;
+
+    $topicsName = esc($requestValues['topics-name']);
+    $topicSlug = makeSlug($topicsName);
+
+    if (empty($topicsName)) {
+        array_push($errors, "É necessário o nome do tópico");
+    }
+
+    $topicCheckQuery = "SELECT * FROM topics WHERE slug='$topicSlug' LIMIT 1";
+    $result = mysqli_query($conn, $topicCheckQuery);
+
+    if (mysqli_num_rows($result) > 0) {
+        array_push($errors, "OPS! Este tópico já existe");
+    }
+
+    if (count($errors) == 0) {
+        $query = "INSERT INTO topics (name, slug) VALUES ('$topicsName', '$topicSlug')";
+        mysqli_query($conn, $query);
+
+        $_SESSION['message'] = "Tópico criado com sucesso!";
+        header('location: topics.php');
+        exit(0);
+    }
+}
+
+/**
+ * Busca o topico no banco de dados, utilizando o ID como paramentro
+ * Define campos de tópicos no formulario para edicao
+ */
+function editTopics($topicsId)
+{
+    global $conn, $topicsName, $isEditingUser, $topicsId;
+
+    $sql = "SELECT * FROM topics WHERE id=$topicsId LIMIT 1";
+    $result = mysqli_query($conn, $sql);
+    $topics = mysqli_fetch_assoc($result);
+    $topicsName = $topics['name'];
+}
+
+function updateTopics($requestValues)
+{
+    global $conn, $errors, $topicsName, $topicsId;
+
+    $topicsName = esc($requestValues['topics-name']);
+    $topicsId = esc($requestValues['topics-id']);
+    $topicSlug = makeSlug($topicsName);
+
+    if (empty($topicsName)) {
+        array_push($errors, "É necessário o nome do tópico");
+    }
+
+    if (count($errors) == 0) {
+        $query = "UPDATE topics SET name='$topicsName', slug='$topicSlug' WHERE id=$topicsId";
+        mysqli_query($conn, $query);
+
+        $_SESSION['message'] = "Tópico atualizado com sucesso!";
+        header('location: topics.php');
+        exit(0);
+    }
+}
+
+function deleteTopics($topicsId)
+{
+    global $conn;
+    $sql = "DELETE FROM topics WHERE id=$topicsId";
+
+    if (mysqli_query($conn, $sql)) {
+        $_SESSION['message'] = "Tópico excluido con sucesso!";
+        header('location: topics.php');
         exit(0);
     }
 }
