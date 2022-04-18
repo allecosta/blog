@@ -9,7 +9,7 @@ $email = "";
 $errors = [];
 
 $topicsId = 0;
-$isEditingUser = false;
+$isEditingTopic = false;
 $topicsName = "";
 
 /**
