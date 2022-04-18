@@ -8,7 +8,7 @@ $topics = getAllTopics();
 
 ?>
 
-<title>Administrador | Gerenciador de Tópicos</title>
+<title>Gerenciador de Tópicos</title>
 
 </head>
 
@@ -37,7 +37,7 @@ $topics = getAllTopics();
         </div>
 
         <div class="table-div">
-            <?php include(ROOT_PATH . '/includes/messages.php') ?>
+            <?php include(ROOT_PATH . '/admin/includes/messages.php') ?>
 
             <?php if (empty($topics)) : ?>
                 <h1>Nenhum tópico no Banco de Dados</h1>
