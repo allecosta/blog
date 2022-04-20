@@ -5,7 +5,7 @@ include(ROOT_PATH . '/admin/includes/admin_functions.php');
 include(ROOT_PATH . '/admin/includes/post_functions.php');
 include(ROOT_PATH . '/admin/includes/head_section.php');
 
-// $posts = getAllPosts();
+$posts = getAllPosts();
 
 ?>
 
